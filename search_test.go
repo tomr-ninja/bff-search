@@ -51,8 +51,13 @@ func TestSearchEngine(t *testing.T) {
 	s := bff.NewSearchEngine[TestStruct, TestQuery](te, NoopVerifier{}, bff.WithNMappers(1))
 	s.Index(42, TestStruct{Field1: 42, Field2: "hello"})
 	s.Index(43, TestStruct{Field1: 43, Field2: "world"})
+	s.Index(44, TestStruct{Field1: 42, Field2: "duck"})
 
 	ids, err := s.Lookup(TestQuery{Field1: 42, Field2: "hello"})
 	require.NoError(t, err)
 	require.Equal(t, []uint64{42}, ids)
+
+	ids, err = s.Lookup(TestQuery{Field1: 42}) // omit Field2
+	require.NoError(t, err)
+	require.Equal(t, []uint64{42, 44}, ids) // both IDs have Field1 == 42
 }
