@@ -67,6 +67,9 @@ func (idx *Index) Lookup(searchTerms [][]byte) ([]uint64, error) {
 			for i := range scanData {
 				ok := true
 				for _, term := range searchTerms {
+					if len(term) == 0 {
+						continue
+					}
 					if !idx.filters.MayContain(scanData[i], term) {
 						ok = false
 						break
